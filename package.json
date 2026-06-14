@@ -1,0 +1,32 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.7.0",
+    "socket.io": "^4.8.3",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/mongoose": "^5.11.96",
+    "@types/node": "^25.9.3",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.1.0",
+    "utf-8-validate": "^6.0.6"
+  }
+}

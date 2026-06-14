@@ -1,0 +1,11 @@
+# dependencies
+node_modules/
+
+# environment variables
+.env
+
+# vscode settings
+.vscode/
+
+# lock file (optional, usually you KEEP this in real projects)
+package-lock.json
