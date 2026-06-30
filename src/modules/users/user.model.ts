@@ -1,18 +1,53 @@
+import mongoose, { Schema, Document, CallbackWithoutResultAndOptionalError } from "mongoose";
+import bcrypt from "bcrypt";
 
+export interface IUserDocument extends Document {
+  email: string;
+  emailVerified: boolean;
+  phone?: string;
+  phoneVerified?: boolean;
 
+  passwordHash?: string;
+  authProvider: "local" | "google" | "facebook" | "apple";
+  providerId?: string;
 
-import mongoose from "mongoose";
+  name: string;
+  username?: string;
+  avatarUrl?: string;
 
+  isActive: boolean;
+  isBanned: boolean;
+  role: "user" | "admin" | "moderator";
 
+  refreshTokenVersion: number;
+  lastLoginAt?: Date;
+  lastLoginIp?: string;
+  failedLoginAttempts: number;
+  lockedUntil?: Date;
 
-const userSchema = new mongoose.Schema(
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+  emailVerifyToken?: string;
+  emailVerifyExpires?: Date;
+
+  locale: string;
+  timezone?: string;
+  pushToken?: string;
+
+  deletedAt?: Date;
+
+  comparePassword(candidate: string): Promise<boolean>;
+  toPublicJSON(): Record<string, unknown>;
+}
+
+const userSchema = new Schema<IUserDocument>(
   {
     email: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
     emailVerified: { type: Boolean, default: false },
     phone: { type: String, unique: true, sparse: true },
     phoneVerified: { type: Boolean, default: false },
 
-    passwordHash: { type: String, select: false }, // omitted from queries by default
+    passwordHash: { type: String, select: false },
     authProvider: { type: String, enum: ["local", "google", "facebook", "apple"], default: "local" },
     providerId: { type: String, index: true, sparse: true },
 
@@ -22,7 +57,7 @@ const userSchema = new mongoose.Schema(
 
     isActive: { type: Boolean, default: true },
     isBanned: { type: Boolean, default: false },
-  
+    role: { type: String, enum: ["user", "admin", "moderator"], default: "user" },
 
     refreshTokenVersion: { type: Number, default: 0 },
     lastLoginAt: { type: Date },
@@ -41,22 +76,24 @@ const userSchema = new mongoose.Schema(
 
     deletedAt: { type: Date },
   },
-  { timestamps: true ,versionKey:false} 
+  { timestamps: true }
 );
 
-// Hash password before save (only if local auth + password changed)
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("passwordHash") || !this.passwordHash) return next();
-  this.passwordHash = await bcrypt.hash(this.passwordHash, 12);
-  next();
-});
 
-userSchema.methods.comparePassword = function (candidate) {
-  return bcrypt.compare(candidate, this.passwordHash);
+userSchema.pre("save", async function (this: IUserDocument) {
+  if (!this.isModified("passwordHash") || !this.passwordHash) return;
+  this.passwordHash = await bcrypt.hash(this.passwordHash, 12);
+})
+
+
+userSchema.methods.comparePassword = function (
+  this: IUserDocument,
+  candidate: string
+): Promise<boolean> {
+  return bcrypt.compare(candidate, this.passwordHash as string);
 };
 
-// Strip sensitive fields when sending to client
-userSchema.methods.toPublicJSON = function () {
+userSchema.methods.toPublicJSON = function (this: IUserDocument) {
   return {
     id: this._id,
     name: this.name,
@@ -66,4 +103,4 @@ userSchema.methods.toPublicJSON = function () {
   };
 };
 
-export const user = mongoose.model("User", userSchema);
+export default mongoose.model<IUserDocument>("User", userSchema);

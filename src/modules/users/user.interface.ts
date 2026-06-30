@@ -1,53 +1,53 @@
-
 export interface IUser {
-    id: string;
-    email: string;
-    emailVerified: boolean;
-    phone?: string;
-    phoneVerified?: boolean;
+  id: string;                 
+  email: string;                
+  emailVerified: boolean;
+  phone?: string;                
+  phoneVerified?: boolean;
 
 
-    passwordHash?: string;
-    authProvider: "local" | "google" | "facebook" | "apple";
-    providerId?: string;
+  passwordHash?: string;         
+  authProvider: "local" | "google" | "facebook" | "apple";
+  providerId?: string;           
 
 
-    name: string;
-    username?: string;
-    avatarUrl?: string;
-
-    isActive: boolean;
-    isBanned: boolean;
+  name: string;
+  username?: string;           
+  avatarUrl?: string;
 
 
-
-    refreshTokenVersion: number;
-    lastLoginAt?: Date;
-    lastLoginIp?: string;
-    failedLoginAttempts: number;
-    lockedUntil?: Date;
-
-    passwordResetToken?: string;
-    passwordResetExpires?: Date;
-    emailVerifyToken?: string;
-    emailVerifyExpires?: Date;
+  isActive: boolean;             
+  isBanned: boolean;
+  role: "user" | "admin" | "moderator";
 
 
-    locale: string;
-    timezone?: string;
-    pushToken?: string;
+  refreshTokenVersion: number;   
+  lastLoginAt?: Date;
+  lastLoginIp?: string;
+  failedLoginAttempts: number;
+  lockedUntil?: Date;            
+
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+  emailVerifyToken?: string;
+  emailVerifyExpires?: Date;
+
+ 
+  locale: string;                
+  timezone?: string;
+  pushToken?: string;            
 
 
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;             
 }
 
 
 export interface IUserPublic {
-    id: string;
-    name: string;
-    username?: string;
-    avatarUrl?: string;
+  id: string;
+  name: string;
+  username?: string;
+  avatarUrl?: string;
 
 }
