@@ -18,6 +18,11 @@ initSocket(httpServerApp);
 app.use('/api/v1/users',userRouter);
 
 // not found
+app.use((req,res)=>{
+    res.status(404).json({
+        success:false,message:`This ${req.url}  Route not founded`
+    })
+})
 // global error
 
 
