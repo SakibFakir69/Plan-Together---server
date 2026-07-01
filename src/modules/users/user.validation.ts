@@ -10,6 +10,8 @@ export const registerSchema = z.object({
     .regex(/[a-z]/, "Must contain lowercase letter")
     .regex(/[0-9]/, "Must contain number"),
   username: z.string().min(3).max(20).regex(/^[a-zA-Z0-9_]+$/).optional(),
+  phone:z.number().max(11,{message:"Must be under 11 digit"}).min(11,{message:"Must be 11 digit"}),
+  locale:z.string()
 });
 
 export const loginSchema = z.object({
