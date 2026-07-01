@@ -1,4 +1,5 @@
-import app from ".";
+import httpServerApp from ".";
+import mongoose from "mongoose";
 
 if(!process.env.PORT)
 {
@@ -8,10 +9,22 @@ if(!process.env.PORT)
 const PORT = process.env.PORT as string;
 
 
-(()=>{
+(async()=>{
 
     try {
-        app.listen(PORT, ()=>{
+        if(!process.env.MONGO_URL)
+        {
+            throw new Error("Please provide mongodb url")
+        }
+       await mongoose.connect(process.env.MONGO_URL)
+        .then((res)=>{
+            console.log("[ MongoDB connected ]")
+        })
+        .catch((error)=>{
+            console.log("[MongoDB]", error)
+        })
+
+        httpServerApp.listen(PORT, ()=>{
             console.log("[PORT]: [ SOCKET.IO, EXPRESS] APP RUNNING BY PORT",PORT )
         })
         

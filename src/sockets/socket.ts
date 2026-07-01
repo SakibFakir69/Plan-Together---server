@@ -14,11 +14,12 @@ const initSocket = (mainServer:http.Server)=>{
 
    
     io.on("connection",(socket)=>{
+
         console.log("[Conncted User] : =>", socket.id)
 
 
 
-        socket.on("string",function (){});
+      
 
         // 1-> pass socket argument to emitter
         // 2-> emitter conneect with socket and pass emitter ans listerner;

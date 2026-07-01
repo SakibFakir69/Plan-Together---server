@@ -10,6 +10,7 @@ const isValidObjectId = (id: string) => mongoose.Types.ObjectId.isValid(id);
 const createUser = asyncHandler(async (req: Request, res: Response) => {
   
   const { email, password, name, username, phone, locale } = req.body as RegisterInput;
+  
 
   const existing = await User.findOne({ email });
   if (existing) {
