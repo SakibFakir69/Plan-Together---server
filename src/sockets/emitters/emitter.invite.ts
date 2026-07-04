@@ -1,0 +1,10 @@
+
+
+
+
+export const SEND_INVITE="SEND-INVITE";
+export const RECEIVE_INVITE="RECEIVE-INVITE";
+export const INVITE_ERROR= "INVITE-ERROR"
+export const ACCEPT_INVITE_="INVITE-ACCEPT";
+export const REJECT_INVITE="REJECT-INVITE"
+export const DECISION="DECISION"

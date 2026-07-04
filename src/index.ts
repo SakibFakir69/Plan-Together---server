@@ -4,7 +4,7 @@ import express from 'express';
 import initSocket from "./sockets/socket";
 import http from 'http'
 import { userRouter } from './modules/users/user.route';
-import { authRouter } from './modules/auth/user.route';
+import { authRouter } from './modules/auth/auth.route';
 
 
 const app= express();
