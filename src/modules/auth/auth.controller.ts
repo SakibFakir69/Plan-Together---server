@@ -1,8 +1,8 @@
-// controllers/auth.controller.ts
+
 import { Request, Response } from "express";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import UserModel, { IUserDocument } from "../models/User.model";
+import UserModel, { IUserDocument } from "../users/user.model";
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET!;
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
@@ -14,7 +14,7 @@ const LOCK_TIME_MS = 15 * 60 * 1000; // 15 min
 // ---------- helpers ----------
 
 const signAccessToken = (user: IUserDocument) =>
-  jwt.sign({ sub: user._id, role: user.role }, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRES });
+  jwt.sign({ sub: user._id, role: user.role , email:user?.email }, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRES });
 
 const signRefreshToken = (user: IUserDocument) =>
   jwt.sign(
