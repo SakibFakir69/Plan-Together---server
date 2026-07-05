@@ -3,49 +3,30 @@ import { Request, Response } from "express";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import UserModel, { IUserDocument } from "../users/user.model";
+import { signAccessToken } from "../../utils/access-token";
+import { signRefreshToken } from "../../utils/refresh-token";
+import { LOCK_TIME_MS, MAX_FAILED_ATTEMPTS } from "../../constant/auth/constant.auth";
+import { setRefreshCookie } from "../../utils/set-cookie";
 
-const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET!;
-const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
-const ACCESS_EXPIRES = "15m";
-const REFRESH_EXPIRES = "30d";
-const MAX_FAILED_ATTEMPTS = 5;
-const LOCK_TIME_MS = 15 * 60 * 1000; // 15 min
 
-// ---------- helpers ----------
 
-const signAccessToken = (user: IUserDocument) =>
-  jwt.sign({ sub: user._id, role: user.role , email:user?.email }, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRES });
 
-const signRefreshToken = (user: IUserDocument) =>
-  jwt.sign(
-    { sub: user._id, v: user.refreshTokenVersion },
-    REFRESH_SECRET,
-    { expiresIn: REFRESH_EXPIRES }
-  );
-
-const setRefreshCookie = (res: Response, token: string) => {
-  res.cookie("refreshToken", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    path: "/api/auth", // scope cookie to auth routes only
-  });
-};
-
-// ---------- controllers ----------
 
 
 
 const loginUser = async (req: Request, res: Response) => {
+
   try {
     const { email, password } = req.body;
+    console.log("JWT_ACCESS_SECRET:", process.env.JWT_ACCESS_SECRET , email,password);
+
     if (!email || !password) {
       return res.status(400).json({ message: "email and password are required" });
     }
 
     const user = await UserModel.findOne({ email: email.toLowerCase() })
       .select("+passwordHash");
+      
 
     if (!user || user.authProvider !== "local") {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -70,6 +51,7 @@ const loginUser = async (req: Request, res: Response) => {
       await user.save();
       return res.status(401).json({ message: "Invalid credentials" });
     }
+    
 
     // Success: reset failed attempts, update login metadata
     user.failedLoginAttempts = 0;
@@ -78,8 +60,12 @@ const loginUser = async (req: Request, res: Response) => {
     user.lastLoginIp = req.ip;
     await user.save();
 
+  console.log("token",user);
+
     const accessToken = signAccessToken(user);
     const refreshToken = signRefreshToken(user);
+    console.log(accessToken, refreshToken)
+    
     setRefreshCookie(res, refreshToken);
 
     return res.status(200).json({
@@ -88,7 +74,7 @@ const loginUser = async (req: Request, res: Response) => {
     });
   } catch (err) {
     console.error("[loginUser]", err);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error",error:err.message });
   }
 };
 
@@ -99,7 +85,7 @@ const refreshAccessToken = async (req: Request, res: Response) => {
 
     let payload: { sub: string; v: number };
     try {
-      payload = jwt.verify(token, REFRESH_SECRET) as { sub: string; v: number };
+      payload = jwt.verify(token,process.env.REFRESH_SECRET) as { sub: string; v: number };
     } catch {
       return res.status(401).json({ message: "Invalid or expired refresh token" });
     }

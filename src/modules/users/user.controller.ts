@@ -11,7 +11,6 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
   
   const { email, password, name, username, phone, locale } = req.body as RegisterInput;
   
-
   const existing = await User.findOne({ email });
   if (existing) {
     res.status(409).json({ success: false, message: "Email already in use" });
@@ -31,7 +30,7 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
     passwordHash: password,
     name,
     username,
-  
+
     locale,
     authProvider: "local",
   });
