@@ -1,38 +1,63 @@
 
-
-
-
-import mongoose, { model, Mongoose, Schema, SchemaType } from "mongoose";
+import { Schema, model } from "mongoose";
 import { IWorkSpace } from "./workspace.interface";
 
-enum WorkSpace{
-    "FAMILY"="Family",
-    "STUDENT"="Student"
-}
-
-const WorkSpaceSchema = new Schema<IWorkSpace>({
-    name:{
-        type:String,
-        required:true,
+const workspaceSchema = new Schema<IWorkSpace>(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 100,
     },
-    ownerId:{
-        type:String,
-        required:true,
-        index:true,
-        default:Schema.Types.ObjectId
 
+    description: {
+      type: String,
+      trim: true,
+      maxlength: 500,
     },
-    type:{
-        type:String,
-        required:true,
-        enum:Object.values(WorkSpace),
-        default:WorkSpace.FAMILY
 
-    }
+    type: {
+      type: String,
+      enum: ["family", "student"],
+      required: true,
+    },
 
+    ownerId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
 
+    memberIds: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
 
-},{timestamps:true,versionKey:false}) 
+    isPrivate: {
+      type: Boolean,
+      default: true,
+    },
 
+    inviteCode: {
+      type: String,
+      unique: true,
+      sparse: true,
+      uppercase: true,
+      trim: true,
+    },
+  },
+  {
+    timestamps: true,
+    versionKey:false
+  }
+);
 
-export const WorkSpace = model<"WorkSpace", Workspace>
+export const WorkspaceModel = model<IWorkSpace>(
+  "Workspace",
+  workspaceSchema
+);
