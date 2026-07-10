@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { workSpaceController } from "./workspace.controller";
+import { requireAuth } from "../../middlewares";
 
 
 
@@ -7,7 +8,7 @@ const router = Router();
 
 
 
-router.post('/', workSpaceController.createWorkSpace)
+router.post('/',requireAuth, workSpaceController.createWorkSpace)
 
 router.put('/',workSpaceController.updateWorkSpace)
 router.delete('/', workSpaceController.deleteWorkSpace)

@@ -1,24 +1,29 @@
+// workspace.interface.ts
 import { Types } from "mongoose";
 
-export type WorkSpaceType = "family" | "student";
-export enum workSpaceEnum {
-     "family"= "family",
-      "student"= "student"
+export const workSpaceEnum = {
+  family: "family",
+  student: "student",
+} as const;
 
-    
+export const memberRoleEnum = {
+  admin: "admin",
+  subAdmin: "sub-admin",
+  user: "user",
+} as const;
+
+export interface IWorkspaceMember {
+  user: Types.ObjectId;
+  role: (typeof memberRoleEnum)[keyof typeof memberRoleEnum];
+  joinedAt: Date;
 }
 
 export interface IWorkSpace {
-
-
   name: string;
   description?: string;
-  type: WorkSpaceType;
+  type: (typeof workSpaceEnum)[keyof typeof workSpaceEnum];
   ownerId: Types.ObjectId;
-  memberIds: Types.ObjectId[];
+  members: IWorkspaceMember[];
   isPrivate: boolean;
   inviteCode?: string;
-
-  
- 
 }

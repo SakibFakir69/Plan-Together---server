@@ -1,6 +1,25 @@
-
 import { Schema, model } from "mongoose";
 import { IWorkSpace } from "./workspace.interface";
+
+const workspaceMemberSchema = new Schema(
+  {
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "sub-admin", "user"],
+      default: "user",
+    },
+    joinedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: false }
+);
 
 const workspaceSchema = new Schema<IWorkSpace>(
   {
@@ -31,12 +50,10 @@ const workspaceSchema = new Schema<IWorkSpace>(
       index: true,
     },
 
-    memberIds: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    members: {
+      type: [workspaceMemberSchema],
+      default: [],
+    },
 
     isPrivate: {
       type: Boolean,
@@ -53,11 +70,14 @@ const workspaceSchema = new Schema<IWorkSpace>(
   },
   {
     timestamps: true,
-    versionKey:false
+    versionKey: false,
   }
 );
 
-export const WorkspaceModel = model<IWorkSpace>(
-  "Workspace",
-  workspaceSchema
+// prevent duplicate members
+workspaceSchema.index(
+  { _id: 1, "members.user": 1 },
+  { unique: true, partialFilterExpression: { "members.user": { $exists: true } } }
 );
+
+export const WorkspaceModel = model<IWorkSpace>("Workspace", workspaceSchema);
