@@ -12,7 +12,11 @@ export const signAccessToken = (user: IUserDocument) =>{
   try {
     console.log(ACCESS_EXPIRES,ACCESS_SECRET,{ sub: user._id, role: user.role , email:user?.email })
 
-   return jwt.sign({ sub: user._id, role: user.role , email:user?.email }, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRES })
+   return jwt.sign(
+  { sub: user._id, id: user?._id, role: user.role, email: user?.email, tokenVersion: user.refreshTokenVersion },
+  ACCESS_SECRET,
+  { expiresIn: ACCESS_EXPIRES }
+);
 
     
   } catch (error) {

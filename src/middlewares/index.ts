@@ -7,6 +7,7 @@ import User from "../modules/users/user.model"
 export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
   const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : req.cookies?.accessToken;
+  console.log(token);
 
   if (!token) {
     res.status(401).json({ success: false, message: "Unauthorized" });
@@ -14,11 +15,21 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
   }
 
   try {
+    console.log("token")
+    console.log(token, " ==== ", process.env.JWT_ACCESS_SECRET)
+
+    console.log("going decode")
+    // In the login request's "Tests" tab
+    
+
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string) as {
+      sub: string,
       id: string;
+      email: string,
       role: "user" | "admin" | "moderator";
       tokenVersion: number;
     };
+    console.log("decoded")
 
     const user = await User.findOne({ _id: decoded.id, deletedAt: { $exists: false } }).select(
       "refreshTokenVersion isBanned isActive"
@@ -37,7 +48,7 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
     req.user = { id: decoded.id, role: decoded.role, tokenVersion: decoded.tokenVersion };
     next();
   } catch (err) {
-    res.status(401).json({ success: false, message: "Invalid or expired token" });
+    res.status(401).json({ success: false, message: "Invalid or expired token", error: err.message, stack: err.stack });
     return;
   }
 };

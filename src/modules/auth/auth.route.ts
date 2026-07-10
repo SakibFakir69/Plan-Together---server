@@ -13,7 +13,7 @@ router.post("/login",authRateLimit, authController.loginUser);
 router.post("/refresh-token", authController.refreshAccessToken);
 
 router.post("/forgot-password",
-    authRateLimit, authController.forgotPassword);
+    authRateLimit,  authController.forgotPassword);
 router.post("/reset-password",authRateLimit, authController.resetPassword);
 
 

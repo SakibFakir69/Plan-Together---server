@@ -6,7 +6,7 @@ import UserModel, { IUserDocument } from "../users/user.model";
 import { signAccessToken } from "../../utils/access-token";
 import { signRefreshToken } from "../../utils/refresh-token";
 import { LOCK_TIME_MS, MAX_FAILED_ATTEMPTS } from "../../constant/auth/constant.auth";
-import { setRefreshCookie } from "../../utils/set-cookie";
+import { setAccessCookie, setRefreshCookie } from "../../utils/set-cookie";
 
 
 
@@ -18,7 +18,7 @@ const loginUser = async (req: Request, res: Response) => {
 
   try {
     const { email, password } = req.body;
-    console.log("JWT_ACCESS_SECRET:", process.env.JWT_ACCESS_SECRET , email,password);
+    console.log("JWT_ACCESS_SECRET:", process.env.JWT_ACCESS_SECRET, email, password);
 
     if (!email || !password) {
       return res.status(400).json({ message: "email and password are required" });
@@ -26,7 +26,7 @@ const loginUser = async (req: Request, res: Response) => {
 
     const user = await UserModel.findOne({ email: email.toLowerCase() })
       .select("+passwordHash");
-      
+
 
     if (!user || user.authProvider !== "local") {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -51,7 +51,7 @@ const loginUser = async (req: Request, res: Response) => {
       await user.save();
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    
+
 
     // Success: reset failed attempts, update login metadata
     user.failedLoginAttempts = 0;
@@ -60,39 +60,43 @@ const loginUser = async (req: Request, res: Response) => {
     user.lastLoginIp = req.ip;
     await user.save();
 
-  console.log("token",user);
 
     const accessToken = signAccessToken(user);
     const refreshToken = signRefreshToken(user);
     console.log(accessToken, refreshToken)
-    
-    setRefreshCookie(res, refreshToken);
+
+    setAccessCookie(res, accessToken as string);
+    setRefreshCookie(res, refreshToken as string);
 
     return res.status(200).json({
       user: user.toPublicJSON(),
-      accessToken,
+      accessToken,refreshToken
+
     });
   } catch (err) {
     console.error("[loginUser]", err);
-    return res.status(500).json({ message: "Internal server error",error:err.message });
+    return res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };
 
 const refreshAccessToken = async (req: Request, res: Response) => {
   try {
+    const REFRESH_SECRET = process.env.REFRESH_SECRET;
+    if (!REFRESH_SECRET) throw new Error("REFRESH_SECRET is not set");
+
     const token = req.cookies?.refreshToken;
     if (!token) return res.status(401).json({ message: "No refresh token" });
 
     let payload: { sub: string; v: number };
     try {
-      payload = jwt.verify(token,process.env.REFRESH_SECRET) as { sub: string; v: number };
+      payload = jwt.verify(token, process.env.REFRESH_SECRET as string) as unknown as { sub: string; v: number };
     } catch {
       return res.status(401).json({ message: "Invalid or expired refresh token" });
     }
 
     const user = await UserModel.findById(payload.sub);
     if (!user || user.refreshTokenVersion !== payload.v) {
-      
+
       return res.status(401).json({ message: "Refresh token revoked" });
     }
 
@@ -129,7 +133,7 @@ const logoutAllDevices = async (req: Request, res: Response) => {
 
 const changePassword = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).userId; 
+    const userId = (req as any).userId;
     const { currentPassword, newPassword } = req.body;
 
     if (!currentPassword || !newPassword) {
@@ -162,6 +166,8 @@ const changePassword = async (req: Request, res: Response) => {
 const forgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
+   
+
     if (!email) return res.status(400).json({ message: "Email is required" });
 
     const user = await UserModel.findOne({ email: email.toLowerCase() });
@@ -182,7 +188,7 @@ const forgotPassword = async (req: Request, res: Response) => {
     return res.status(200).json({ message: "If that email exists, a reset link was sent" });
   } catch (err) {
     console.error("[forgotPassword]", err);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error",error:err.message });
   }
 };
 
@@ -219,7 +225,7 @@ const resetPassword = async (req: Request, res: Response) => {
 };
 
 export const authController = {
- 
+
   loginUser,
   refreshAccessToken,
   logoutUser,
