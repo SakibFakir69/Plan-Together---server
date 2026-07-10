@@ -5,6 +5,9 @@ import initSocket from "./sockets/socket";
 import http from 'http'
 import { userRouter } from './modules/users/user.route';
 import { authRouter } from './modules/auth/auth.route';
+import { GlobalErrorHandler } from './middlewares/global-error-hander';
+import { workSpaceEnum } from './modules/workspace/workspace.interface';
+import { workSpaceRouter } from './modules/workspace/workspace.route';
 
 
 const app= express();
@@ -20,7 +23,7 @@ initSocket(httpServerApp);
 // API
 app.use('/api/v1/users',userRouter);
 app.use('/api/v1/auth',authRouter);
-
+app.use('/api/v1/workspace',workSpaceRouter);
 
 // NOT FOUNDED
 app.use((req,res)=>{
@@ -29,7 +32,7 @@ app.use((req,res)=>{
     })
 })
 // GlOBAL ERROR
-
+app.use(GlobalErrorHandler);
 
 
 // EXPORT APP

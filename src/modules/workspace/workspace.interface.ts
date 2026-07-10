@@ -1,6 +1,12 @@
 import { Types } from "mongoose";
 
 export type WorkSpaceType = "family" | "student";
+export enum workSpaceEnum {
+     "family"= "family",
+      "student"= "student"
+
+    
+}
 
 export interface IWorkSpace {
 
