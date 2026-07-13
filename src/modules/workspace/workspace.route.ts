@@ -9,8 +9,8 @@ const router = Router();
 
 
 router.post('/',requireAuth, workSpaceController.createWorkSpace)
-
-router.put('/',workSpaceController.updateWorkSpace)
+router.put('/:workspaceId',workSpaceController.updateWorkSpace)
 router.delete('/', workSpaceController.deleteWorkSpace)
-
+router.get('/',workSpaceController.getMyAllWorkSpace);
+router.post('/join',requireAuth,workSpaceController.joinWorkspaceByCode)
 export const workSpaceRouter= router;

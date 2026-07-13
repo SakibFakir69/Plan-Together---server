@@ -14,8 +14,8 @@ export const memberRoleEnum = {
 
 export interface IWorkspaceMember {
   user: Types.ObjectId;
-  role: (typeof memberRoleEnum)[keyof typeof memberRoleEnum];
-  joinedAt: Date;
+  role: "admin" | "sub-admin" | "user";
+   joinedAt?: Date;
 }
 
 export interface IWorkSpace {

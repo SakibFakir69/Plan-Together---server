@@ -6,3 +6,11 @@
 
 
 
+======================
+
+if task have price count price,total
+if user set time show reamining time
+after finished month gave email or message to user 
+
+
+======================

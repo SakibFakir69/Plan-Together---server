@@ -26,3 +26,11 @@ export const createWorkspaceValidation = z.object({
       .optional(),
   }),
 });
+
+export const updateWorkspaceValidation = z.object({
+  body: z.object({
+    name: z.string().trim().min(2).max(100).optional(),
+    description: z.string().trim().max(500).optional(),
+    isPrivate: z.boolean().optional(),
+  }),
+});
