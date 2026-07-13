@@ -1,0 +1,8 @@
+
+
+
+1. gave reference to workspace
+2. assigne to user 
+schma.types.objectId -> userid 
+ref:"user"v
+ref:"workspace" workspaceId

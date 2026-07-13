@@ -26,4 +26,5 @@ export interface IWorkSpace {
   members: IWorkspaceMember[];
   isPrivate: boolean;
   inviteCode?: string;
+  categories:string[]
 }

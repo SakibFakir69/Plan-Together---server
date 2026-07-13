@@ -49,7 +49,11 @@ const workspaceSchema = new Schema<IWorkSpace>(
       required: true,
       index: true,
     },
-
+    categories:{
+      type:[String],
+      default:[]
+    },
+   
     members: {
       type: [workspaceMemberSchema],
       default: [],
@@ -74,7 +78,7 @@ const workspaceSchema = new Schema<IWorkSpace>(
   }
 );
 
-// prevent duplicate members
+
 workspaceSchema.index(
   { _id: 1, "members.user": 1 },
   { unique: true, partialFilterExpression: { "members.user": { $exists: true } } }

@@ -4,8 +4,8 @@ import { createWorkspaceValidation, updateWorkspaceValidation } from "./workspac
 import { WorkspaceModel } from "./workspace.model";
 import httpStatus from "http-status";
 import { generateInviteCode } from "../../utils/genrate-invite-code";
-import { STUDENT_DEFAULT_CATEGORIES } from "../../constant/workspace/constant.workspace";
-
+import { FAMILY_DEFAULT_CATEGORIES, STUDENT_DEFAULT_CATEGORIES } from "../../constant/workspace/constant.workspace";
+import { FamilyTaskCategory } from "../family/family.interface";
 
 
  
@@ -24,7 +24,7 @@ const createWorkSpace = async (
         const { name, description, type, isPrivate, inviteCode } =
             parsedData.body;
  
-        const ownerId = req.user?.id; // set by your auth middleware
+        const ownerId = req.user?.id;
  
         if (!ownerId) {
             return res.status(httpStatus.UNAUTHORIZED).json({
@@ -52,7 +52,7 @@ const createWorkSpace = async (
             isPrivate: isPrivate ?? false,
             inviteCode: finalInviteCode,
             ownerId: ownerId,
-            members: [{ user: ownerId, role: "admin", joinedAt: new Date() }],
+            members: [{ user: ownerId, role: "admin" as const, joinedAt: new Date() }],
         };
  
         let workspace;
@@ -61,17 +61,15 @@ const createWorkSpace = async (
             workspace = await WorkspaceModel.create({
                 ...basePayload,
                 type: workSpaceEnum.family,
-                categories: FAMILY_DEFAULT_CATEGORIES,
-                // family-specific defaults
-                allowance: { enabled: false },
+                categories: FAMILY_DEFAULT_CATEGORIES
+               
             });
         } else if (type === workSpaceEnum.student) {
             workspace = await WorkspaceModel.create({
                 ...basePayload,
                 type: workSpaceEnum.student,
                 categories: STUDENT_DEFAULT_CATEGORIES,
-                // student-specific defaults
-                semester: null,
+               
             });
         } else {
             return res.status(httpStatus.BAD_REQUEST).json({
