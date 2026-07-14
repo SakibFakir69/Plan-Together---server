@@ -8,6 +8,10 @@ const workspaceMemberSchema = new Schema(
       ref: "User",
       required: true,
     },
+   rewardPoints:{
+      type:Number,
+      default:0
+    },
     role: {
       type: String,
       enum: ["admin", "sub-admin", "user"],

@@ -15,7 +15,8 @@ export const memberRoleEnum = {
 export interface IWorkspaceMember {
   user: Types.ObjectId;
   role: "admin" | "sub-admin" | "user";
-   joinedAt?: Date;
+  rewardPoints:number,
+  joinedAt?: Date;
 }
 
 export interface IWorkSpace {
@@ -26,5 +27,5 @@ export interface IWorkSpace {
   members: IWorkspaceMember[];
   isPrivate: boolean;
   inviteCode?: string;
-  categories:string[]
+  categories: string[]
 }
