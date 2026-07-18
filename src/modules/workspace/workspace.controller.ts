@@ -5,8 +5,6 @@ import { WorkspaceModel } from "./workspace.model";
 import httpStatus from "http-status";
 import { generateInviteCode } from "../../utils/genrate-invite-code";
 import { FAMILY_DEFAULT_CATEGORIES, STUDENT_DEFAULT_CATEGORIES } from "../../constant/workspace/constant.workspace";
-import { FamilyTaskCategory } from "../family/family.interface";
-
 
  
 

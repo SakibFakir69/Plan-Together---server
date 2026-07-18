@@ -8,6 +8,7 @@ import { authRouter } from './modules/auth/auth.route';
 import { GlobalErrorHandler } from './middlewares/global-error-hander';
 import { workSpaceEnum } from './modules/workspace/workspace.interface';
 import { workSpaceRouter } from './modules/workspace/workspace.route';
+import socketConfig from './config/socket/socket.config';
 
 
 const app= express();
@@ -16,9 +17,7 @@ const app= express();
 // MIDDLEWARE
 app.use(express.json())
 
-// SOCKET
-const httpServerApp =http.createServer(app);
-initSocket(httpServerApp);
+
 
 // API
 app.use('/api/v1/users',userRouter);

@@ -1,5 +1,8 @@
-import httpServerApp from ".";
+
 import mongoose from "mongoose";
+import http from 'http';
+import httpServerApp from ".";
+import initSocket from "./sockets/socket";
 
 if(!process.env.PORT)
 {
@@ -7,6 +10,10 @@ if(!process.env.PORT)
 }
 
 const PORT = process.env.PORT as string;
+
+// SOCKET
+const httpServerAppSocket =http.createServer(httpServerApp);
+initSocket(httpServerAppSocket);
 
 
 (async()=>{

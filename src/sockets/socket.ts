@@ -1,9 +1,9 @@
-
+import jwt from "jsonwebtoken";
 import { Server } from "socket.io";
 import http from 'http';
 import socketConfig from "../config/socket/socket.config";
 import { ACCEPT_INVITE, RECEIVE_INVITE, REJECT_INVITE, SEND_INVITE } from "./emitters/emitter.invite";
-import { ACCEPT_INVITE_FN, REJECT_INVITE_FN, SEND_AND_RECEIVE_INVITE, SEND_AND_RECEIVE_INVITE_FN } from "./events/event.invite";
+import { ACCEPT_INVITE_FN, REJECT_INVITE_FN,  SEND_AND_RECEIVE_INVITE_FN } from "./events/event.invite";
 
 let io: Server;
 
@@ -15,6 +15,21 @@ const initSocket = (mainServer: http.Server) => {
 
 
     io = socketConfig(mainServer);
+    // ADD AUTH MIDDLEWARE GAVE PERMANENTLY ADDRESS
+
+    io.use((socket,next)=>{
+        const token =socket.handshake.auth?.token;
+          if (!token) return next(new Error("Unauthorized: no token"));
+
+           try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+            socket.data.userId = decoded.id; 
+         
+            next();
+        } catch {
+            next(new Error("Unauthorized: invalid token"));
+        }
+    })
 
 
     io.on("connection", (socket) => {
