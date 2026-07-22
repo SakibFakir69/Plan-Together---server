@@ -1,18 +1,32 @@
 import { Server } from "socket.io"
 import http from 'http'
 
-const socketConfig = (mainServer:http.Server)=>{
+let io: Server | null = null;
 
-    return new Server(mainServer,{
+const socketConfig = (mainServer: http.Server) => {
 
-        cors:{
-            origin:"*",
-            methods:["GET","POST","PATCH","DELETE","*"],
-            credentials:true,
+    if (io) return io;
+
+    io = new Server(mainServer, {
+
+        cors: {
+            origin: "*",
+            methods: ["GET", "POST", "PATCH", "DELETE", "*"],
+            credentials: true,
 
         }
     })
 
+    return io;
+
+}
+
+export const getIo = (): Server => {
+
+    if (!io) throw new Error("Socket.io not initialized.");
+    return io;
+
 }
 
 export default socketConfig;
+

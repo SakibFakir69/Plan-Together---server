@@ -4,9 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import httpStatus from "http-status";
 import { TaskModel } from "./task.model";
 
-// ============================================================
-// Create Task
-// ============================================================
+
 export const createTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { workspaceId } = req.params;
@@ -46,9 +44,7 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
     }
 };
 
-// ============================================================
-// List Tasks (by workspace, optional category/completed filters)
-// ============================================================
+
 export const getTasks = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { workspaceId } = req.params;
@@ -67,9 +63,7 @@ export const getTasks = async (req: Request, res: Response, next: NextFunction) 
     }
 };
 
-// ============================================================
-// Get single Task
-// ============================================================
+
 export const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { taskId } = req.params;
@@ -85,9 +79,7 @@ export const getTaskById = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
-// ============================================================
-// Update Task (title/description/category/dueDate/rewardPoints)
-// ============================================================
+
 export const updateTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { taskId } = req.params;
@@ -108,9 +100,7 @@ export const updateTask = async (req: Request, res: Response, next: NextFunction
     }
 };
 
-// ============================================================
-// Assign Task to a member
-// ============================================================
+
 export const assignTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { taskId } = req.params;
@@ -136,9 +126,7 @@ export const assignTask = async (req: Request, res: Response, next: NextFunction
     }
 };
 
-// ============================================================
-// Complete Task
-// ============================================================
+
 export const completeTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { taskId } = req.params;
@@ -170,9 +158,7 @@ export const completeTask = async (req: Request, res: Response, next: NextFuncti
     }
 };
 
-// ============================================================
-// Delete Task
-// ============================================================
+
 export const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { taskId } = req.params;
@@ -188,3 +174,7 @@ export const deleteTask = async (req: Request, res: Response, next: NextFunction
     }
 };
 
+
+export const taskController ={
+    createTask, deleteTask,updateTask,completeTask,assignTask
+}

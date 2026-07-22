@@ -6,7 +6,7 @@ import httpStatus from "http-status";
 import { generateInviteCode } from "../../utils/genrate-invite-code";
 import { FAMILY_DEFAULT_CATEGORIES, STUDENT_DEFAULT_CATEGORIES } from "../../constant/workspace/constant.workspace";
 
- 
+
 
  
 const createWorkSpace = async (

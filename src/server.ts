@@ -1,7 +1,7 @@
 
 import mongoose from "mongoose";
 import http from 'http';
-import httpServerApp from ".";
+import app from ".";
 import initSocket from "./sockets/socket";
 
 if(!process.env.PORT)
@@ -12,7 +12,7 @@ if(!process.env.PORT)
 const PORT = process.env.PORT as string;
 
 // SOCKET
-const httpServerAppSocket =http.createServer(httpServerApp);
+const httpServerAppSocket =http.createServer(app);
 initSocket(httpServerAppSocket);
 
 
@@ -31,7 +31,7 @@ initSocket(httpServerAppSocket);
             console.log("[MongoDB]", error)
         })
 
-        httpServerApp.listen(PORT, ()=>{
+        app.listen(PORT, ()=>{
             console.log("[PORT]: [ SOCKET.IO, EXPRESS] APP RUNNING BY PORT",PORT )
         })
         
